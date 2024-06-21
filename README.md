@@ -1,7 +1,7 @@
 # Easy-shop-E-commerce-store
 
 ### Over view of the project
-This project is a an online E-commerce store. The client server of the project is ready. My role in this project is to create the backend server to make the website full-stack. I created the backend of the project using Java spring boot to connect the API and to allow the client to fetch from the server. The client will send API request's to the server and the server will get the data that the client is asking for and return it. In this project the backend server is allowing user's to login/register using tokens that is unique to each user. Below is a diagram pattern of how the backend was built.
+This project is a an online E-commerce store. The client server of the project is ready. My role in this project is to create the backend server to make the website full-stack. I created the backend of the project using Java spring boot to connect the API and to allow the client to fetch from the server. The client will send API request's to the server and the server will get the data that the client is asking for and return it. In this project the backend server is allowing user's to login/register as either (User, admin) using tokens that is unique to each user/admin. Below is a diagram of the backend MVC pattern.
 
 ## Diagram
 ![backend-diagram](images/backendPatternDiagram.png)
