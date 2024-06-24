@@ -159,16 +159,18 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
     @Override
     public void update(int productId, Product product)
     {
-        String sql = "UPDATE products" +
-                " SET name = ? " +
-                "   , price = ? " +
-                "   , category_id = ? " +
-                "   , description = ? " +
-                "   , color = ? " +
-                "   , image_url = ? " +
-                "   , stock = ? " +
-                "   , featured = ? " +
-                " WHERE product_id = ?;";
+        String sql = """
+                UPDATE products
+                SET name = ?
+                   , price = ?
+                   , category_id = ?
+                   , description = ?
+                   , color = ?
+                   , image_url = ?
+                   , stock = ?
+                   , featured = ?
+                WHERE product_id = ?;
+                """;
 
         try (Connection connection = getConnection())
         {
@@ -195,8 +197,10 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
     public void delete(int productId)
     {
 
-        String sql = "DELETE FROM products " +
-                " WHERE product_id = ?;";
+        String sql = """
+                DELETE FROM products
+                WHERE product_id = ?;
+                """;
 
         try (Connection connection = getConnection())
         {
