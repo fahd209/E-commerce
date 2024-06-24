@@ -53,15 +53,16 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     }
 
     @Override
-    public ShoppingCartItem addItem(int userId, int productId) {
+    public ShoppingCart addItem(int userId, int productId) {
 
         boolean isInShoppingCart = isInShoppingCart(userId, productId);
+        ShoppingCartItem shoppingCartItem = null;
 
         if(isInShoppingCart)
         {
             String sql = """
                     UPDATE shopping_cart
-                    SET quantity = ?
+                    SET quantity = quantity + ?
                     WHERE user_id = ?
                     AND product_Id = ?
                     """;
@@ -69,7 +70,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
             try(Connection connection = getConnection())
             {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
-                preparedStatement.setInt(1, +1);
+                preparedStatement.setInt(1, 1);
                 preparedStatement.setInt(2, userId);
                 preparedStatement.setInt(3, productId);
 
@@ -80,7 +81,8 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
                 throw new RuntimeException(e);
             }
         }
-        else {
+        else
+        {
             String sql = """
                     INSERT INTO shopping_cart
                     (user_id, product_id, quantity)
@@ -88,18 +90,28 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
                     (?, ?, ?);
                     """;
 
-            try (Connection connection = getConnection()) {
+            try (Connection connection = getConnection())
+            {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setInt(1, userId);
                 preparedStatement.setInt(2, productId);
                 preparedStatement.setInt(3, 1);
 
                 preparedStatement.executeUpdate();
-            } catch (Exception e) {
+
+                shoppingCartItem = new ShoppingCartItem()
+                {{
+                   setProduct(productDao.getById(productId));
+                   setQuantity(1);
+                }};
+
+                shoppingCart.add(shoppingCartItem);
+            } catch (Exception e)
+            {
                 throw new RuntimeException(e);
             }
         }
-        return null;
+        return getByUserId(userId);
     }
 
     public Boolean isInShoppingCart(int userId, int productId)

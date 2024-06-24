@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
-    // http://localhost:8080/categories
 @CrossOrigin
 public class CategoriesController
 {
@@ -75,6 +74,7 @@ public class CategoriesController
 
     @PostMapping("")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
     public Category addCategory(@RequestBody Category category)
     {
         // insert the category
@@ -89,6 +89,7 @@ public class CategoriesController
 
     @PutMapping("{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateCategory(@PathVariable int id, @RequestBody Category category)
     {
         // update the category by id
@@ -104,6 +105,7 @@ public class CategoriesController
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable int id)
     {
         // delete the category by id
