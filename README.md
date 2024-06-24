@@ -12,3 +12,7 @@ This project is a an online E-commerce store. The client server of the project i
 Implemented all CRUD operation's for the category's controller using REST API's. The server recieves a localhost:8080 protocall to the categorys controller. The controller proccess the call and calls a function in the categoriesDao class depending what type of call it is,(GET, POST, PUT, DELETE) and who is making the call (admin or user).
 
 ## Phase 2
+
+Implemeted all CRUD operations for the products and made responses for all the api filter protocalls, allowing user to search by category, price range, and also color. Also added admin tools like, create product, update, and delete product.
+
+## Phase 3
