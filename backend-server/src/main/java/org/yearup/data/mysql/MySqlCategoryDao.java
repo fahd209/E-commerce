@@ -42,7 +42,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         }
         catch (Exception e)
         {
-            System.out.println(e);
+            throw new RuntimeException(e);
         }
         return allCategories;
     }
@@ -73,7 +73,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         }
         catch (Exception e)
         {
-            System.out.println(e);
+            throw new RuntimeException(e);
         }
         return category;
     }
@@ -104,7 +104,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         }
         catch (Exception e)
         {
-            System.out.println(e);
+            throw new RuntimeException(e);
         }
         return getById(newId);
     }
@@ -132,7 +132,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         }
         catch (Exception e)
         {
-            System.out.println(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -153,7 +153,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         }
         catch (Exception e)
         {
-            System.out.println(e);
+            throw new RuntimeException(e);
         }
     }
 
