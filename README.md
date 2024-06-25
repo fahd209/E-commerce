@@ -16,3 +16,11 @@ Implemented all CRUD operation's for the category's controller using REST API's.
 Implemeted all CRUD operations for the products and made responses for all the api filter protocalls, allowing user to search by category, price range, and also color. Also added admin tools like, create product, update, and delete product.
 
 ## Phase 3
+
+Implemeted all CRUD operation for the shopping cart, allowing user add, clear, and update the shopping cart. The client sends a request to localhost:8080/cart and the shoppingCartController responsed depending on if the user is logged in and depending on the type of request. 
+
+## Phase 4 
+
+In this phase I created a controller to responed to the api calls that client make for the user profile. The api calls go to the profilesController and the profiles controller calls a method in profilesDao depending on the user's request (GET profile or Update profile). 
+
+## Phase 5
