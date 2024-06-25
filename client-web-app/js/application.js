@@ -3,6 +3,10 @@ function showLoginForm()
 {
     templateBuilder.build('login-form', {}, 'login');
 }
+function showRegisterForm()
+{
+    templateBuilder.build('register-form', {}, 'login');
+}
 
 function hideModalForm()
 {
@@ -15,6 +19,17 @@ function login()
     const password = document.getElementById("password").value;
 
     userService.login(username, password);
+    hideModalForm()
+}
+
+function register()
+{
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
+    const role = document.getElementById("role-select").value;
+
+    userService.register(username, password, confirmPassword, role);
     hideModalForm()
 }
 
@@ -75,6 +90,11 @@ function clearCart()
 {
     cartService.clearCart();
     cartService.loadCartPage();
+}
+
+function checkout()
+{
+    cartService.checkout();
 }
 
 function setCategory(control)

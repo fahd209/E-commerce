@@ -22,7 +22,7 @@ header div{
     align-items: flex-end;
 }
 
-header #links
+header .links
 {
     gap: 20px;
     justify-content: flex-start;
@@ -110,6 +110,11 @@ main > .content-form .cart-item
 {
     margin: 10px 0;
     color: maroon;
+}
+
+.checkout-button
+{
+    margin-right: 10px;
 }
 
 .product

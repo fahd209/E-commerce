@@ -50,7 +50,10 @@ public class CategoriesController
     {
         // get the category by id
         try {
-            return categoryDao.getById(id);
+            Category category = categoryDao.getById(id);
+            if(category == null)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "category not found");
+            return category;
         }
         catch (Exception ex)
         {

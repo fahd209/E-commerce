@@ -151,6 +151,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
     @Override
     public ShoppingCart updateShoppingCartItem(int itemId, ShoppingCartItem shoppingCartItem, int userId) {
+
         String sql = """
                 UPDATE shopping_cart
                 SET quantity = ?
@@ -167,9 +168,9 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
             preparedStatement.executeUpdate();
 
-            ShoppingCartItem shoppingCartItem1 = shoppingCart.get(shoppingCartItem.getProductId());
-            shoppingCartItem1.setQuantity(shoppingCartItem.getQuantity());
-            shoppingCart.add(shoppingCartItem1);
+
+            shoppingCartItem.setQuantity(shoppingCartItem.getQuantity());
+            shoppingCart.add(shoppingCartItem);
         }
         catch (Exception e)
         {

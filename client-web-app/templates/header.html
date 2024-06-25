@@ -1,6 +1,6 @@
 
 {{#loggedin}}
-<div id="links">
+<div class="links">
     <img src="/images/logo.png" alt="eashshop logo">
     <a href="#" onclick="loadHome()">Home</a>
     <a href="#" onclick="editProfile()">Profile</a>
@@ -16,12 +16,13 @@
 </div>
 {{/loggedin}}
 {{#loggedout}}
-<div id="links">
+<div class="links">
     <img src="/images/logo.png" alt="eashshop logo">
     <a href="#" onclick="loadHome()">Home</a>
 </div>
 
-<div>
-    <a href="#"  onclick="showLoginForm();return false;">login</a>
+<div class="links">
+    <a href="#" class="mr-5" onclick="showLoginForm();return false;">login</a>
+    <a href="#"  onclick="showRegisterForm();return false;">register</a>
 </div>
 {{/loggedout}}

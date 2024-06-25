@@ -81,19 +81,25 @@ class UserService {
         templateBuilder.build('header', user, 'header-user');
     }
 
-    register (username, password, confirm)
+    register (username, password, confirm, role)
     {
         const url = `${config.baseUrl}/register`;
         const register = {
             username: username,
             password: password,
             confirmPassword: confirm,
-            role: 'USER'
+            role: role
         };
 
         axios.post(url, register)
              .then(response => {
                  console.log(response.data)
+
+                 const data = {
+                     error: `${response.data.username} has been registered. Please log in.`
+                 };
+
+                 templateBuilder.append("message", data, "errors")
              })
             .catch(error => {
 

@@ -88,12 +88,23 @@ class ShoppingCartService {
         h1.innerText = "Cart";
         cartHeader.appendChild(h1);
 
+        const buttonsDiv = document.createElement("div")
+        cartHeader.appendChild(buttonsDiv)
+
+        const checkout = document.createElement("button");
+        checkout.classList.add("btn")
+        checkout.classList.add("btn-success")
+        checkout.classList.add("checkout-button")
+        checkout.innerText = "Checkout";
+        checkout.addEventListener("click", () => this.checkout());
+        buttonsDiv.appendChild(checkout)
+
         const button = document.createElement("button");
         button.classList.add("btn")
         button.classList.add("btn-danger")
         button.innerText = "Clear";
         button.addEventListener("click", () => this.clearCart());
-        cartHeader.appendChild(button)
+        buttonsDiv.appendChild(button)
 
         contentDiv.appendChild(cartHeader)
         main.appendChild(contentDiv);
@@ -139,6 +150,36 @@ class ShoppingCartService {
 
 
         parent.appendChild(outerDiv);
+    }
+
+    checkout()
+    {
+
+        const url = `${config.baseUrl}/orders`;
+
+        axios.post(url)
+             .then(response => {
+                 this.cart = {
+                     items: [],
+                     total: 0
+                 }
+
+                 const data = {
+                     message: `Thank You. Your order number is: ${response.data.orderId}.`
+                 };
+
+                 templateBuilder.append("message", data, "errors")
+                 this.updateCartDisplay()
+                 loadHome();
+             })
+             .catch(error => {
+
+                 const data = {
+                     error: "There was a problem with the checkout."
+                 };
+
+                 templateBuilder.append("error", data, "errors")
+             })
     }
 
     clearCart()
