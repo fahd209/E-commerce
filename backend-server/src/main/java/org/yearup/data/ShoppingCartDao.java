@@ -11,4 +11,8 @@ public interface ShoppingCartDao
     ShoppingCart addItem(int userId, int productId);
 
     Boolean isInShoppingCart(int userId, int productId);
+
+    ShoppingCart updateShoppingCartItem(int itemId, ShoppingCartItem shoppingCartItem, int userId);
+
+    ShoppingCart clearCart(int userId);
 }

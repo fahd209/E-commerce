@@ -33,6 +33,8 @@ public class ShoppingCart
         return items.get(productId);
     }
 
+    public void clearItems() { items.clear(); };
+
     public BigDecimal getTotal()
     {
         BigDecimal total = items.values()
