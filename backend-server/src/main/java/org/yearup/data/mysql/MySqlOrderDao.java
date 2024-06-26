@@ -34,7 +34,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         // getting user profile by user id from userDao
         Profile profile = profileDao.getProfile(userId);
         // shopping cart and user's info to shoppingCart
-        Order order = mapToOrder(shoppingCart, profile);
+        Order order = mapToOrder(profile);
 
         // inserting order
         String sql = """
@@ -147,7 +147,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         return order;
     }
 
-    public Order mapToOrder(ShoppingCart shoppingCart, Profile profile)
+    public Order mapToOrder(Profile profile)
     {
         Order order = new Order()
         {{

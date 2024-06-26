@@ -24,6 +24,7 @@ header div{
 }
 
 header div .logout-btn{
+    margin-right: 10px;
     padding: 5px;
     border-radius: 5px;
     text-decoration: none;
@@ -57,10 +58,17 @@ header .links a:hover{
 
 header .cart
 {
+    height: 50px;
     font-size: x-large;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 10px;
     cursor: pointer;
+    border: 1px solid;
+}
+
+header .cart:hover{
+    background-color: rgb(85, 85, 85, 0.2);
+    border-radius: 5px;
+
 }
 
 header .cart #cart-items
@@ -146,7 +154,6 @@ main > .content-form .cart-item
 {
     display: flex;
     flex-direction: column;
-
     justify-content: space-between;
     /*width: 30%;*/
     border: solid 1px #ccc;

@@ -25,7 +25,7 @@ In this phase I created a controller to responed to the api calls that client ma
 
 ## Phase 5
 
-In this phase the logic that I implemented is allowing the user to check out. Once the user goes to cart they're is an option for checking out. Once the user checks out, that cart will go back to empty and the order with get saved in the order table in mySql database.
+In this phase the logic that I implemented is allowing the user to check out. Once the user goes to cart they're is an option for checking out. Once the user checks out, that cart will go back to empty and the order will get saved in the order table in mySql database.
 
 # Pictures and descriptions
 
@@ -39,7 +39,7 @@ Once the user chooses the category an api request will be sent to the backend.
 
 ![categories api](images/categoresApi.png)
 
-The backend application gets the request and a GET then calls productDao.ListByCategoryId which returns a list of products that get back to the controller. The list gets sent back as a response from the server to the client as an json String that gets transformed into html.
+The backend application gets the GET request and calls productDao.ListByCategoryId which returns a list of products that get back to the controller. The list gets sent back as a response from the server to the client as a json that gets transformed into html.
 
 productsDao code example:
 ```java
@@ -115,7 +115,7 @@ A new user will be created with the user name, password, and it will check if th
 ### Login screen
 ![login screen](images/loginScreen.png)
 
-In the login screen once the user inputs the username and password and token will be created out of the user name and password. Once the token is created it will get passed to an the authentication. For the secuirty of this application i used Spring-secuirty JWT. Code for login api is below:
+In the login screen once the user inputs the username and password a token will be created out of the user name and password. Once the token is created it will get passed to an the authentication. For the secuirty of this application i used Spring-secuirty JWT. Code for login api is below:
 ```java
 @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
@@ -147,7 +147,7 @@ In the login screen once the user inputs the username and password and token wil
 ### Home screen
 ![home screen](images/homeScreen.png)
 
-In the home screen, if the user is logged the user will be able to add product to cart and view the cart. The user is also allowed to search for product by price range, color and category. If the user doesn't change miniprice and maximum price they will be set to default as (MinPrice: 0, maxPrice: 1500). Code for the filter is down below:
+In the home screen, if the user is logged the user will be able to add product to cart and view the cart. The user is also allowed to search for product by price range, color and category. If the user doesn't change the minimum price and maximum price they will be set to default as (MinPrice: 0, maxPrice: 1500). Code for the filter is down below:
 
 ```java
  // filtering products with category, minPrice, maxPrice, and color
@@ -200,7 +200,7 @@ In the home screen, if the user is logged the user will be able to add product t
 ### Profile screen
 ![profile screen](images/profileScreen.png)
 
-Once the user clicks on the profile screen they have the options to change they're profile information. Once the use clicks update, the server will get the username of the user that's logged with java princaple object and search for the user with userDao.Once the user been found an api PUT request will be sent to the server. The server will responed to the request and update the user profile information. Code for updating profile is below: 
+Once the user clicks on the profile screen they have the options to change they're profile information. Once the use clicks update, the server will get the username of the user that's logged with java princaple object and search for the user with userDao. Once the user been found an api PUT request will be sent to the server. The server will responed to the request and update the user profile information. Code for updating profile is below: 
 
 * Controller
 ```java
@@ -264,7 +264,7 @@ Once the user clicks on the profile screen they have the options to change they'
 ### cart screen
 ![cart screen](images/cartScreen.png)
 
-The cart screen allows the user to check out products added or clear the cart. Once the user checks out the application will get the username of the user that logged in and search for the user in the user table to get the id. The order will be then be saved in the order table and the cart items will be saved in the order line table with the order id. The order table will also contain the userId. Code and examples of how the orders are saved is down below:
+The cart screen allows the user to check out products add or clear the cart. Once the user checks out the application will get the username of the user that logged in and search for the user in the user table to get the id. The order will be then be saved in the order table and the cart items will be saved in the order line table with the order id. The order table will also contain the userId. Code and examples of how the orders are saved is down below:
 
 ![orders](images/orderstable.png)
 
@@ -352,7 +352,7 @@ Code for saving order in the database:
 
 ## Peace of code that I am proud of
 
-The most challenging part of this project was the shopping cart api. I started off by getting the data from the shoppingCart table and sending each shopping cart item one at a time and it wasn't working. I soon then found that the client is expecting a whole shopping cart object with all the item in a hashmap. The format of the shopping cart JSON is down below: 
+The most challenging part of this project was the shopping cart api. I started off by getting the data from the shoppingCart table and sending each shopping cart item one at a time and it wasn't working. I then found out that the client is expecting a whole shopping cart object with all the item in a hashmap. The format of the shopping cart JSON is down below: 
 
 ```JSON
 {
