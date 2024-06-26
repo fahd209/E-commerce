@@ -18,6 +18,7 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
         super(dataSource);
     }
 
+    // filtering products with category, minPrice, maxPrice, and color
     @Override
     public List<Product> search(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color)
     {
@@ -31,9 +32,9 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
                 """;
 
         categoryId = categoryId == null ? -1 : categoryId;
-        minPrice = minPrice == null ? new BigDecimal("0") : minPrice;
-        maxPrice = maxPrice == null ? new BigDecimal("1500") : maxPrice;
-        color = color == null ? "" : color;
+        minPrice = minPrice == null ? new BigDecimal("0") : minPrice; // if min price is null set it as 0
+        maxPrice = maxPrice == null ? new BigDecimal("1500") : maxPrice; // if max price is null set it as 1500
+        color = color == null ? "" : color; // if color is null set it to empty String
 
         try (Connection connection = getConnection())
         {
@@ -62,6 +63,7 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
         return products;
     }
 
+    // list all product by category
     @Override
     public List<Product> listByCategoryId(int categoryId)
     {
@@ -91,7 +93,7 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
         return products;
     }
 
-
+    // getting product by id
     @Override
     public Product getById(int productId)
     {
@@ -115,6 +117,7 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
         return null;
     }
 
+    // creating product
     @Override
     public Product create(Product product)
     {
@@ -156,6 +159,7 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
         return null;
     }
 
+    // updating product by id and requested body
     @Override
     public void update(int productId, Product product)
     {
@@ -193,6 +197,7 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
         }
     }
 
+    // deleting product by id
     @Override
     public void delete(int productId)
     {

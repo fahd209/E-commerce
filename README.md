@@ -24,3 +24,244 @@ Implemeted all CRUD operation for the shopping cart, allowing user add, clear, a
 In this phase I created a controller to responed to the api calls that client make for the user profile. The api calls go to the profilesController and the profiles controller calls a method in profilesDao depending on the user's request (GET profile or Update profile). 
 
 ## Phase 5
+
+In this phase the logic that I implemented is allowing the user to check out. Once the user goes to cart they're is an option for checking out. Once the user checks out, that cart will go back to empty and the order with get saved in the order table in mySql database.
+
+# Pictures and descriptions
+
+![categories](images/categoresimage.png)
+
+The categories list options allows the user to to filter through the products using the categories (Electronics, fashion, etc...).
+
+![categories](images/categoriesApiCall.png)
+
+Once the user chooses the category an api request will be sent to the backend. 
+
+![categories api](images/categoresApi.png)
+
+The backend application gets the request and a GET then calls productDao.ListByCategoryId which returns a list of products that get back to the controller. The list gets sent back as a response from the server to the client as an json String that gets transformed into html.
+
+productsDao code example:
+```java
+@Override
+    public List<Product> listByCategoryId(int categoryId)
+    {
+        List<Product> products = new ArrayList<>();
+
+        String sql = "SELECT * FROM products " +
+                    " WHERE category_id = ? ";
+
+        try (Connection connection = getConnection())
+        {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, categoryId);
+
+            ResultSet row = statement.executeQuery();
+
+            while (row.next())
+            {
+                Product product = mapRow(row);
+                products.add(product);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return products;
+    }
+```
+
+## Screens
+
+### Register screen
+![register screen](images/registerScreen.png)
+
+In this screen once the user provides all the information needed to create an account an api GET Request "/register" will be sent to server in the authenticationController with a method register. 
+The method will request for registerDto(data transger object) body.
+A new user will be created with the user name, password, and it will check if the password is confirmed correctly. The password will be saved in the database as a hash. Down below is a code for the register api.
+
+```java
+@ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ResponseEntity<User> register(@Valid @RequestBody RegisterUserDto newUser) {
+
+        try
+        {
+            boolean exists = userDao.exists(newUser.getUsername());
+            if (exists)
+            {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Already Exists.");
+            }
+
+            // create user
+            User user = userDao.create(new User(0, newUser.getUsername(), newUser.getPassword(), newUser.getRole()));
+
+            // create profile
+            Profile profile = new Profile();
+            profile.setUserId(user.getId());
+            profileDao.create(profile);
+
+            return new ResponseEntity<>(user, HttpStatus.CREATED);
+        }
+        catch (Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
+    }
+```
+
+### Login screen
+![login screen](images/loginScreen.png)
+
+In the login screen once the user inputs the username and password and token will be created out of the user name and password. Once the token is created it will get passed to an the authentication. For the secuirty of this application i used Spring-secuirty JWT. Code for login api is below:
+```java
+@RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = tokenProvider.createToken(authentication, false);
+
+        try
+        {
+            User user = userDao.getByUserName(loginDto.getUsername());
+
+            if (user == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+            return new ResponseEntity<>(new LoginResponseDto(jwt, user), httpHeaders, HttpStatus.OK);
+        }
+        catch(Exception ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
+    }
+```
+
+### Home screen
+![home screen](images/homeScreen.png)
+
+In the home screen, if the user is logged the user will be able to add product to cart and view the cart. The user is also allowed to search for product by price range, color and category. If the user doesn't change miniprice and maximum price they will be set to default as (MinPrice: 0, maxPrice: 1500). Code for the filter is down below:
+
+```java
+ // filtering products with category, minPrice, maxPrice, and color
+    @Override
+    public List<Product> search(Integer categoryId, BigDecimal minPrice, BigDecimal maxPrice, String color)
+    {
+        List<Product> products = new ArrayList<>();
+
+        String sql = """
+                SELECT * FROM products
+                WHERE (category_id = ? OR ? = -1)
+                AND (price BETWEEN ? AND ? OR ? = -1)
+                AND (color = ? OR ? = '')
+                """;
+
+        categoryId = categoryId == null ? -1 : categoryId;
+        minPrice = minPrice == null ? new BigDecimal("0") : minPrice; // if min price is null set it as 0
+        maxPrice = maxPrice == null ? new BigDecimal("1500") : maxPrice; // if max price is null set it as 1500
+        color = color == null ? "" : color; // if color is null set it to empty String
+
+        try (Connection connection = getConnection())
+        {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, categoryId);
+            statement.setInt(2, categoryId);
+            statement.setBigDecimal(3, minPrice);
+            statement.setBigDecimal(4, maxPrice);
+            statement.setBigDecimal(5, minPrice);
+            statement.setString(6, color);
+            statement.setString(7, color);
+
+            ResultSet row = statement.executeQuery();
+
+            while (row.next())
+            {
+                Product product = mapRow(row);
+                products.add(product);
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return products;
+    }
+    
+```
+
+### Profile screen
+![profile screen](images/profileScreen.png)
+
+Once the user clicks on the profile screen they have the options to change they're profile information. Once the use clicks update, the server will get the username of the user that's logged with java princaple object and search for the user with userDao.Once the user been found an api PUT request will be sent to the server. The server will responed to the request and update the user profile information. Code for updating profile is below: 
+
+* Controller
+```java
+// update profile with profile body
+    @PutMapping("/profile")
+    public void updateProfile(@RequestBody Profile profile, Principal principal)
+    {
+        try {
+            String userName = principal.getName(); // getting user logged in
+            User user = userDao.getByUserName(userName); // searching for user in database by username
+            int userId = user.getId(); // getting user id
+            profileDao.updateProfile(userId, profile);
+        }
+        catch (Exception e)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Oops...our fault");
+        }
+    }
+```
+
+* Dao
+```java
+// update profile with userId and profile body requested
+    @Override
+    public void updateProfile(int userId, Profile profile) {
+        String sql = """
+                UPDATE profiles
+                SET first_name = ?
+                    , last_name = ?
+                    , phone = ?
+                    , email = ?
+                    , address = ?
+                    , city = ?
+                    , state = ?
+                    , zip = ?
+                WHERE user_id = ?;
+                """;
+
+        try(Connection connection = getConnection())
+        {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, profile.getFirstName());
+                preparedStatement.setString(2, profile.getLastName());
+                preparedStatement.setString(3, profile.getPhone());
+                preparedStatement.setString(4, profile.getEmail());
+                preparedStatement.setString(5, profile.getAddress());
+                preparedStatement.setString(6, profile.getCity());
+                preparedStatement.setString(7, profile.getState());
+                preparedStatement.setString(8, profile.getZip());
+                preparedStatement.setInt(9, userId);
+
+                preparedStatement.executeUpdate();
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+```
+
+### cart screen
+![cart screen](images/cartScreen.png)
+
+The cart screen allows the user to check out products added or clear the cart. 

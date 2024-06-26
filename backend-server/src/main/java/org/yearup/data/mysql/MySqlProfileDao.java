@@ -15,6 +15,7 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
         super(dataSource);
     }
 
+    // creating profile and inserting to the database
     @Override
     public Profile create(Profile profile)
     {
@@ -44,6 +45,7 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
         }
     }
 
+    // getting profile by user id
     @Override
     public Profile getProfile(int userId) {
         Profile profile = null;
@@ -78,6 +80,7 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
         return profile;
     }
 
+    // update profile with userId and profile body requested
     @Override
     public void updateProfile(int userId, Profile profile) {
         String sql = """

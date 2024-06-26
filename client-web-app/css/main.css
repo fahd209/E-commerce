@@ -19,15 +19,40 @@ header img
 header div{
     height: 100%;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
 }
+
+header div .logout-btn{
+    padding: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    background-color: red;
+    border: 1px solid red;
+    width: 60px;
+}
+
+header div .logout-btn:hover{
+    background-color: rgba(195, 36, 36, 0.8);
+}
+
 
 header .links
 {
     gap: 20px;
-    justify-content: flex-start;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
     padding-right: 20px;
+}
+
+header .links a{
+    text-decoration: none;
+    padding-bottom: 3px;
+}
+
+header .links a:hover{
+    border-bottom: 2px solid #93c54b;
 }
 
 header .cart

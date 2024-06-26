@@ -66,7 +66,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
 
     @Override
     public void addOrderLineItem(int userId, ShoppingCart shoppingCart) {
-        // getting cartItem to list on map entrys
+        // getting cartItem from shopping cart and converting it to list of map entry's
         List<Map.Entry<Integer, ShoppingCartItem>> shoppingCartItems = new ArrayList<>(shoppingCart.getItems().entrySet());
         Order order = getOrderByUserId(userId);
 

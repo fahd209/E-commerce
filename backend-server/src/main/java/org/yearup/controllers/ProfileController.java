@@ -28,14 +28,15 @@ public class ProfileController
     }
 
 
+    // get profile
     @GetMapping("/profile")
     public Profile getProfile(Principal principal)
     {
         try {
             // getting user info
-            String userName = principal.getName();
-            User user = userDao.getByUserName(userName);
-            int userId = user.getId();
+            String userName = principal.getName(); // getting user logged in
+            User user = userDao.getByUserName(userName); // searching for user in database by username
+            int userId = user.getId(); // getting user id
 
             return profileDao.getProfile(userId);
         }
@@ -45,13 +46,14 @@ public class ProfileController
         }
     }
 
+    // update profile with profile body
     @PutMapping("/profile")
     public void updateProfile(@RequestBody Profile profile, Principal principal)
     {
         try {
-            String userName = principal.getName();
-            User user = userDao.getByUserName(userName);
-            int userId = user.getId();
+            String userName = principal.getName(); // getting user logged in
+            User user = userDao.getByUserName(userName); // searching for user in database by username
+            int userId = user.getId(); // getting user id
             profileDao.updateProfile(userId, profile);
         }
         catch (Exception e)
