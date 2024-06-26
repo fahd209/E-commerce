@@ -28,7 +28,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
     }
 
     @Override
-    public ShoppingCart addOrder(int userId) {
+    public Order addOrder(int userId) {
         // getting shopping cart by user id
         ShoppingCart shoppingCart = shoppingCartDao.getByUserId(userId);
         // getting user profile by user id from userDao
@@ -61,7 +61,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         {
             throw new RuntimeException(e);
         }
-        return shoppingCartDao.getByUserId(userId);
+        return order;
     }
 
     @Override
@@ -92,14 +92,14 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                 preparedStatement.setBigDecimal(5, shoppingCartItem.getDiscountPercent());
                 preparedStatement.executeUpdate();
 
-                shoppingCart.clearItems();
-                shoppingCartDao.clearCart(userId);
             }
             catch (Exception e)
             {
                 throw new RuntimeException(e);
             }
         }
+        //shoppingCart.clearItems();
+        shoppingCartDao.clearCart(userId);
     }
 
     // getting order by user id

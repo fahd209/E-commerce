@@ -80,7 +80,7 @@ productsDao code example:
 
 In this screen once the user provides all the information needed to create an account an api GET Request "/register" will be sent to server in the authenticationController with a method register. 
 The method will request for registerDto(data transger object) body.
-A new user will be created with the user name, password, and it will check if the password is confirmed correctly. The password will be saved in the database as a hash. Down below is a code for the register api.
+A new user will be created with the username, password, and it will check if the password is confirmed correctly. The password will be saved in the database as a hash. Down below is a code for the register api.
 
 ```java
 @ResponseStatus(HttpStatus.CREATED)
@@ -115,7 +115,7 @@ A new user will be created with the user name, password, and it will check if th
 ### Login screen
 ![login screen](images/loginScreen.png)
 
-In the login screen once the user inputs the username and password a token will be created out of the user name and password. Once the token is created it will get passed to an the authentication. For the secuirty of this application i used Spring-secuirty JWT. Code for login api is below:
+In the login screen once the user inputs the username and password a token will be created out of the user name and password. Once the token is created it will get passed to an the authentication. For the secuirty of this application I used Spring-secuirty JWT. Code for login api is below:
 ```java
 @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginDto loginDto) {

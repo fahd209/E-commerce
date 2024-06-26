@@ -31,7 +31,7 @@ public class OrdersController {
     }
 
     @PostMapping("/orders")
-    public ShoppingCart addOrder(Principal principal)
+    public Order addOrder(Principal principal)
     {
         try {
             String userName = principal.getName();
