@@ -264,4 +264,171 @@ Once the user clicks on the profile screen they have the options to change they'
 ### cart screen
 ![cart screen](images/cartScreen.png)
 
-The cart screen allows the user to check out products added or clear the cart. 
+The cart screen allows the user to check out products added or clear the cart. Once the user checks out the application will get the username of the user that logged in and search for the user in the user table to get the id. The order will be then be saved in the order table and the cart items will be saved in the order line table with the order id. The order table will also contain the userId. Code and examples of how the orders are saved is down below:
+
+![orders](images/orderstable.png)
+
+![order line item](images/orderLineItem.png)
+
+Code for saving order in the database: 
+
+```java
+    @Override
+    public ShoppingCart addOrder(int userId) {
+        // getting shopping cart by user id
+        ShoppingCart shoppingCart = shoppingCartDao.getByUserId(userId);
+        // getting user profile by user id from userDao
+        Profile profile = profileDao.getProfile(userId);
+        // shopping cart and user's info to shoppingCart
+        Order order = mapToOrder(shoppingCart, profile);
+
+        // inserting order
+        String sql = """
+                INSERT INTO orders
+                (user_id, date, address, city, state, zip, shipping_amount)
+                VALUES
+                (?, ?, ?, ?, ?, ?, ?);
+                """;
+        try(Connection connection = getConnection())
+        {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1,order.getUserid());
+            preparedStatement.setString(2, order.getDate());
+            preparedStatement.setString(3, order.getAddress());
+            preparedStatement.setString(4, order.getCity());
+            preparedStatement.setString(5, order.getState());
+            preparedStatement.setString(6, order.getZip());
+            preparedStatement.setDouble(7, order.getShippingAmount());
+            preparedStatement.executeUpdate();
+
+            addOrderLineItem(userId, shoppingCart);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+        return shoppingCartDao.getByUserId(userId);
+    }
+
+    @Override
+    public void addOrderLineItem(int userId, ShoppingCart shoppingCart) {
+        // getting cartItem from shopping cart and converting it to list of map entry's
+        List<Map.Entry<Integer, ShoppingCartItem>> shoppingCartItems = new ArrayList<>(shoppingCart.getItems().entrySet());
+        Order order = getOrderByUserId(userId);
+
+        String sql = """
+                    INSERT INTO order_line_items
+                    (order_id, product_id, sales_price, quantity, discount)
+                    VALUES
+                    (?, ?, ?, ?, ?)
+                    """;
+
+        // looping through the entry
+        for (Map.Entry<Integer, ShoppingCartItem> entry : shoppingCartItems)
+        {
+            // getting the product id and cart item
+            int productId = entry.getKey();
+            ShoppingCartItem shoppingCartItem = entry.getValue();
+
+            try(Connection connection = getConnection()) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, order.getOrderId());
+                preparedStatement.setInt(2, shoppingCartItem.getProductId());
+                preparedStatement.setBigDecimal(3, shoppingCartItem.getLineTotal());
+                preparedStatement.setInt(4, shoppingCartItem.getQuantity());
+                preparedStatement.setBigDecimal(5, shoppingCartItem.getDiscountPercent());
+                preparedStatement.executeUpdate();
+
+                shoppingCart.clearItems();
+                shoppingCartDao.clearCart(userId);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+```
+
+## Peace of code that I am proud of
+
+The most challenging part of this project was the shopping cart api. I started off by getting the data from the shoppingCart table and sending each shopping cart item one at a time and it wasn't working. I soon then found that the client is expecting a whole shopping cart object with all the item in a hashmap. The format of the shopping cart JSON is down below: 
+
+```JSON
+{
+    "items": 
+    { "1":
+        {
+            "product": {
+            "productId": 1,
+            "name": "Smartphone",
+            "price": 499.99,
+            "categoryId": 1,
+            "description": "A powerful and feature- rich smartphone for all your communication needs.",
+            "color": "Black",
+            "stock": 50,
+            "imageUrl": "smartphone.jpg", "featured": false
+            },
+        "quantity": 2,
+        "discountPercent": 0,
+        "lineTotal": 999.98
+        }, "15": {
+            "product": {
+            "productId": 15,
+            "name": "External Hard Drive",
+            "price": 129.99,
+            "categoryId": 1,
+            "description": "Expand your storage capacity and backup your import ant files with this external hard drive.",
+            "color": "Gray",
+            "stock": 25,
+            "imageUrl": "external-hard-drive.jpg", "featured": true
+            },
+        "quantity": 1,
+        "discountPercent": 0,
+        "lineTotal": 129.99
+        }
+    },
+"total": 1129.97
+}
+```
+
+Sample code of one of the cart CRUD operations:
+
+```java
+@Override
+    public ShoppingCart addOrder(int userId) {
+        // getting shopping cart by user id
+        ShoppingCart shoppingCart = shoppingCartDao.getByUserId(userId);
+        // getting user profile by user id from userDao
+        Profile profile = profileDao.getProfile(userId);
+        // shopping cart and user's info to shoppingCart
+        Order order = mapToOrder(shoppingCart, profile);
+
+        // inserting order
+        String sql = """
+                INSERT INTO orders
+                (user_id, date, address, city, state, zip, shipping_amount)
+                VALUES
+                (?, ?, ?, ?, ?, ?, ?);
+                """;
+        try(Connection connection = getConnection())
+        {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1,order.getUserid());
+            preparedStatement.setString(2, order.getDate());
+            preparedStatement.setString(3, order.getAddress());
+            preparedStatement.setString(4, order.getCity());
+            preparedStatement.setString(5, order.getState());
+            preparedStatement.setString(6, order.getZip());
+            preparedStatement.setDouble(7, order.getShippingAmount());
+            preparedStatement.executeUpdate();
+
+            addOrderLineItem(userId, shoppingCart);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+        return shoppingCartDao.getByUserId(userId);
+    }
+```

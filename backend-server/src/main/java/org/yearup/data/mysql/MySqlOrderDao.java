@@ -81,7 +81,6 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         for (Map.Entry<Integer, ShoppingCartItem> entry : shoppingCartItems)
         {
             // getting the product id and cart item
-            int productId = entry.getKey();
             ShoppingCartItem shoppingCartItem = entry.getValue();
 
             try(Connection connection = getConnection()) {
