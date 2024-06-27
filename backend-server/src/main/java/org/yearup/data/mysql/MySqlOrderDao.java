@@ -36,6 +36,8 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         // shopping cart and user's info to shoppingCart
         Order order = mapToOrder(profile);
 
+        List<OrderLineItem> lineItems = null;
+
         // inserting order
         String sql = """
                 INSERT INTO orders
@@ -55,17 +57,23 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
             preparedStatement.setDouble(7, order.getShippingAmount());
             preparedStatement.executeUpdate();
 
-            addOrderLineItem(userId, shoppingCart);
+            lineItems = addOrderLineItem(userId, shoppingCart);
         }
         catch (Exception e)
         {
             throw new RuntimeException(e);
         }
+
+        for (OrderLineItem lineItem : lineItems)
+        {
+            order.addItem(lineItem);
+        }
+
         return order;
     }
 
     @Override
-    public void addOrderLineItem(int userId, ShoppingCart shoppingCart) {
+    public List<OrderLineItem> addOrderLineItem(int userId, ShoppingCart shoppingCart) {
         // getting cartItem from shopping cart and converting it to list of map entry's
         List<Map.Entry<Integer, ShoppingCartItem>> shoppingCartItems = new ArrayList<>(shoppingCart.getItems().entrySet());
         Order order = getOrderByUserId(userId);
@@ -82,6 +90,14 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         {
             // getting the product id and cart item
             ShoppingCartItem shoppingCartItem = entry.getValue();
+            OrderLineItem lineItem = new OrderLineItem()
+            {{
+               setOrderId(order.getOrderId());
+               setProductId(shoppingCartItem.getProductId());
+               setQuantity(shoppingCartItem.getQuantity());
+               setSales_price(shoppingCartItem.getLineTotal());
+            }};
+            order.addItem(lineItem);
 
             try(Connection connection = getConnection()) {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -98,8 +114,9 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                 throw new RuntimeException(e);
             }
         }
-        //shoppingCart.clearItems();
+
         shoppingCartDao.clearCart(userId);
+        return order.getLineItems();
     }
 
     // getting order by user id

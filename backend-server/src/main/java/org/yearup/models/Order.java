@@ -2,7 +2,9 @@ package org.yearup.models;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Order {
     private int orderId;
@@ -13,6 +15,7 @@ public class Order {
     private String state;
     private String zip;
     private double shippingAmount;
+    private List<OrderLineItem> lineItems = new ArrayList<>();
 
     public Order(int orderId, int userid, String date, String address, String city, String state, String zip, double shippingAmount) {
         LocalDate currentDate = LocalDate.now();
@@ -32,6 +35,19 @@ public class Order {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
         this.date = currentDate.format(formatter);
+    }
+
+    public List<OrderLineItem> getLineItems() {
+        return lineItems;
+    }
+
+    public void setLineItems(List<OrderLineItem> lineItems) {
+        this.lineItems = lineItems;
+    }
+
+    public void addItem(OrderLineItem item)
+    {
+        lineItems.add(item);
     }
 
     public int getOrderId() {
