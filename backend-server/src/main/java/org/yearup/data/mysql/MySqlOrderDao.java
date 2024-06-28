@@ -118,7 +118,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         }
 
         shoppingCartDao.clearCart(userId);
-        return order.getLineItems();
+        return order.getLineIgit tems();
     }
 
     // getting order by user id
