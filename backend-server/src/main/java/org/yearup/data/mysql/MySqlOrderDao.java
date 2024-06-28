@@ -57,6 +57,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
             preparedStatement.setDouble(7, order.getShippingAmount());
             preparedStatement.executeUpdate();
 
+            // getting the list of items in the shopping cart and mapping them to line items
             lineItems = addOrderLineItem(userId, shoppingCart);
         }
         catch (Exception e)
@@ -64,6 +65,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
             throw new RuntimeException(e);
         }
 
+        // looping through the line item list and adding them to the order
         for (OrderLineItem lineItem : lineItems)
         {
             order.addItem(lineItem);
@@ -145,6 +147,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
 
             if(row.next())
             {
+                // getting all columns for the row
                 int orderId = row.getInt("order_id");
                 int clientId = row.getInt("user_id");
                 String date = row.getString("date");
@@ -154,6 +157,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                 String zip = row.getString("zip");
                 double shippingAmount = row.getDouble("shipping_amount");
 
+                // making an order object out the columns
                 order = new Order(orderId, clientId, date, address, city, state, zip, shippingAmount);
             }
         }
@@ -164,6 +168,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         return order;
     }
 
+    // mapping profile info to order
     public Order mapToOrder(Profile profile)
     {
         Order order = new Order()
