@@ -56,18 +56,22 @@ public class ShoppingCartController
         }
     }
 
-    // add a POST method to add a product to the cart - the url should be
-    // https://localhost:8080/cart/products/15 (15 is the productId to be added
-    @PostMapping("/cart/products/{id}")
-    public ShoppingCart addItem(@PathVariable int id, Principal principal)
+    // post method to add a product to the shopping cart with the product id
+    @PostMapping("/cart/products/{productId}")
+    public ShoppingCart addItem(@PathVariable int productId, Principal principal)
     {
         try {
+            // getting current username
             String userName = principal.getName();
 
+            // getting use from the usedao by username
             User user = userDao.getByUserName(userName);
+
+            // getting user id
             int userId = user.getId();
 
-            return shoppingCartDao.addItem(userId , id);
+            // adding an item with user id and product id
+            return shoppingCartDao.addItem(userId , productId);
         }
         catch (Exception e)
         {
@@ -75,9 +79,7 @@ public class ShoppingCartController
         }
     }
 
-    // add a PUT method to update an existing product in the cart - the url should be
-    // https://localhost:8080/cart/products/15 (15 is the productId to be updated)
-    // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
+    // Put mapping for the shopping cart with a specific item id
     @PutMapping("/cart/products/{itemId}")
     public ShoppingCart updateCartItem(@PathVariable int itemId, @RequestBody ShoppingCartItem shoppingCartItem, Principal principal)
     {
@@ -96,8 +98,7 @@ public class ShoppingCartController
         }
     }
 
-    // add a DELETE method to clear all products from the current users cart
-    // https://localhost:8080/cart
+    // delete the cart of the current user
     @DeleteMapping("/cart")
     public ShoppingCart clearCart(Principal principal)
     {
